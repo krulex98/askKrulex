@@ -3,6 +3,14 @@
 
 {% block body %}
 
+    {% if not hot_questions %}
+        <h1 class="d-inline-block mr-4">New questions</h1>
+        <a  class="d-inline-block" href="{% url 'hot-questions' %}"><h2>Hot questions</h2></a>
+    {% else %}
+        <h1 class="d-inline-block mr-4">Hot questions</h1>
+        <a  class="d-inline-block" href="{% url 'home' %}"><h2>New questions</h2></a>
+    {% endif %}
+
     {% for question in object_list %}
         <article class="row">
             <div class="col-auto">

@@ -101,3 +101,15 @@ class QuestionCreate(CreateView):
                 tag = Tag.objects.create(title=title)
             new_quest.tags.add(tag)
         return redirect('/question/id' + str(new_quest.pk))
+
+
+class HotQuestionList(ListView):
+    model = QuestionModel
+    template_name = 'question_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        object_list = sorted(context['object_list'], key=lambda x: x.get_rating(), reverse=True)
+        context['object_list'] = object_list
+        context['hot_questions'] = True
+        return context
