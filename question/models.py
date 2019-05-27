@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+
+from .models_manager import *
 
 
 class User(AbstractUser):
@@ -19,6 +20,9 @@ class LikeAbleModel(models.Model):
         self.likes.remove(user)
         self.dislikes.add(user)
 
+    def get_rating(self):
+        return self.likes.count() - self.dislikes.count()
+
 
 class Tag(models.Model):
     title = models.CharField(max_length=32, null=False)
@@ -30,6 +34,8 @@ class Question(LikeAbleModel):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     tags = models.ManyToManyField(Tag)
     date = models.DateField(auto_now=True)
+
+    objects = QuestionManager()
 
 
 class Answer(LikeAbleModel):

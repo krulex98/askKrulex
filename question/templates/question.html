@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <div class="container">
+        <article class="row">
+            <div class="col-auto">
+                <div class="quest__avatar" style="background-image: url('/{{ question.author.avatar }}')"></div>
+                <div class="quest__points">
+                    <img class="quest__points__like" src="{% static "img/icon-up.png" %}" alt="">
+                    <div class="quest__points__count">{{ question.get_rating }}</div>
+                    <img class="quest__points__dislike" src="{% static "img/icon-down.png" %}" alt="">
+                </div>
+            </div>
+            <div class="col">
+                <h2>{{ question.title }}</h2>
+                <p>{{ question.text }}</p>
+                <p>Tags:
+                    {% for tag in question.tags.all %}
+                        <a href="#">{{ tag.title }}</a>
+                    {% empty %}
+                        <span>no tags</span>
+                    {% endfor %}
+                </p>
+            </div>
+        </article>
+        <hr>
+        {% for answer in answers %}
+            <article class="row answer">
+
+                <div class="col-auto">
+                    <div class="answer__avatar" style="background-image: url('/{{ answer.author.avatar }}')"></div>
+                    <div class="answer__points">
+                        <img class="answer__points__like" src="{% static "img/icon-up.png" %}" alt="">
+                        <div class="answer__points__count">{{ answer.get_rating }}</div>
+                        <img class="answer__points__dislike" src="{% static "img/icon-down.png" %}" alt="">
+                    </div>
+                </div>
+                <div class="col">
+                    <p>{{ answer.text }}</p>
+                    <div class="answer__correct">
+                        <label class="answer__correct__label" for="correct">Correct</label>
+                        <input class="answer__correct__checkbox" type="checkbox" name="correct">
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            <span>No answers</span>
+        {% endfor %}
+        <hr>
+        <article class="row">
+            <form action="" method="post" class="col">
+                {% csrf_token %}
+                <p>{{ answer_form.text }}</p>
+                <input type="submit" value="Answer"/>
+            </form>
+        </article>
+    </div>
+{% endblock %}

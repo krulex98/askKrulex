@@ -26,3 +26,27 @@ class CustomUserCreationForm(UserCreationForm):
             'password2',
             'avatar'
         ]
+
+
+class QuestionForm(forms.ModelForm):
+    title = forms.CharField(required=True, label='Title')
+    text = forms.CharField(required=True, max_length=960, widget=forms.Textarea)
+    tags = forms.CharField(required=False, label='Tags')
+
+    class Meta:
+        model = Question
+        fields = [
+            'title',
+            'text'
+        ]
+
+
+class AnswerForm(forms.ModelForm):
+    text = forms.CharField(required=True, max_length=960, widget=forms.Textarea(
+        attrs={'placeholder': 'Enter your answer here.', 'class': 'answer-textfield'}))
+
+    class Meta:
+        model = Answer
+        fields = [
+            'text'
+        ]

@@ -18,9 +18,11 @@ from django.urls import path
 from question import views
 
 urlpatterns = [
+    path('', views.QuestionList.as_view(), name='home'),
     path('admin/', admin.site.urls),
     path('login/', views.LogIn.as_view()),
     path('register/', views.Register.as_view()),
-    path('settings/', views.Settings.as_view()),
-    path('logout/', views.logout_view)
+    path('settings/id<int:pk>', views.Settings.as_view()),
+    path('logout/', views.logout_view),
+    path('question/id<int:pk>', views.Question.as_view())
 ]

@@ -1,8 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView, CreateView, UpdateView
 from question.forms import *
-
+from .models import Question as QuestionModel
 
 # Create your views here.
 
@@ -29,7 +31,7 @@ class Register(CreateView):
 
 class Settings(UpdateView):
     model = User
-    fields = ['login', 'email', 'nickname', 'avatar']
+    fields = ['email', 'nickname', 'avatar']
     template_name = 'settings.html'
     success_url = '/'
 
@@ -37,3 +39,26 @@ class Settings(UpdateView):
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+
+class Question(DetailView):
+    model = Question
+    form_class = AnswerForm
+    template_name = 'question.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['answer_form'] = self.form_class
+        context['answers'] = Answer.objects.filter(quest_id=self.kwargs['pk'])
+        return context
+
+
+class QuestionList(ListView):
+    model = QuestionModel
+    template_name = 'question_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_list'] = QuestionModel.objects.all()
+        return context
