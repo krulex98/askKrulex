@@ -14,7 +14,7 @@ class CustomUserCreationForm(UserCreationForm):
     nickname = forms.CharField(required=True, label='NickName')
     password1 = forms.CharField(required=True, label='Password', widget=forms.PasswordInput())
     password2 = forms.CharField(required=True, label='Repeat password', widget=forms.PasswordInput())
-    avatar = forms.ImageField(label='Upload avatar')
+    avatar = forms.ImageField(required=False, label='Upload avatar')
 
     class Meta:
         model = User

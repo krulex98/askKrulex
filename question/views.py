@@ -1,6 +1,6 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
-from django.views.generic.edit import FormView, CreateView
+from django.views.generic.edit import FormView, CreateView, UpdateView
 from question.forms import *
 
 
@@ -25,3 +25,15 @@ class Register(CreateView):
     template_name = 'register.html'
     form_class = CustomUserCreationForm
     success_url = '/login/'
+
+
+class Settings(UpdateView):
+    model = User
+    fields = ['login', 'email', 'nickname', 'avatar']
+    template_name = 'settings.html'
+    success_url = '/'
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
