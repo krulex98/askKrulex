@@ -50,3 +50,4 @@ class AnswerForm(forms.ModelForm):
         fields = [
             'text'
         ]
+

@@ -48,12 +48,14 @@
             <span>No answers</span>
         {% endfor %}
         <hr>
-        <article class="row">
-            <form action="" method="post" class="col">
-                {% csrf_token %}
-                <p>{{ answer_form.text }}</p>
-                <input type="submit" value="Answer"/>
-            </form>
-        </article>
+        {% if user.is_authenticated and question.author_id != user.id %}
+            <article class="row">
+                <form action="" method="post" class="col">
+                    {% csrf_token %}
+                    <p>{{ answer_form.text }}</p>
+                    <input type="submit" value="Answer"/>
+                </form>
+            </article>
+        {%  endif %}
     </div>
 {% endblock %}

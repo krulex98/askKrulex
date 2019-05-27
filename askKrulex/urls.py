@@ -24,5 +24,6 @@ urlpatterns = [
     path('register/', views.Register.as_view()),
     path('settings/id<int:pk>', views.Settings.as_view()),
     path('logout/', views.logout_view),
+    path('ask/', views.QuestionCreate.as_view()),
     path('question/id<int:pk>', views.Question.as_view())
 ]

@@ -1,10 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView, CreateView, UpdateView
+from re import split as resplit
 from question.forms import *
 from .models import Question as QuestionModel
+
 
 # Create your views here.
 
@@ -42,7 +45,7 @@ def logout_view(request):
 
 
 class Question(DetailView):
-    model = Question
+    model = QuestionModel
     form_class = AnswerForm
     template_name = 'question.html'
 
@@ -53,6 +56,18 @@ class Question(DetailView):
         context['answers'] = Answer.objects.filter(quest_id=self.kwargs['pk'])
         return context
 
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST)
+
+        if not form.is_valid():
+            return render(request, self.template_name, {'form': form})
+
+        new_answer = form.save(commit=False)
+        new_answer.author_id = request.user.pk
+        new_answer.quest_id = kwargs['pk']
+        new_answer.save()
+        return super(Question, self).get(request, *args, **kwargs)
+
 
 class QuestionList(ListView):
     model = QuestionModel
@@ -62,3 +77,27 @@ class QuestionList(ListView):
         context = super().get_context_data(**kwargs)
         context['object_list'] = QuestionModel.objects.all()
         return context
+
+
+class QuestionCreate(CreateView):
+    form_class = QuestionForm
+    template_name = 'question_create.html'
+    success_url = '/'
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST)
+
+        if not form.is_valid():
+            return render(request, self.template_name, {'form': form})
+
+        tag_titles = resplit(r'[, ]', form.cleaned_data['tags'.lower()])
+        new_quest = form.save(commit=False)
+        new_quest.author_id = request.user.id
+        new_quest.save()
+        for title in tag_titles:
+            try:
+                tag = Tag.objects.get(title=title)
+            except ObjectDoesNotExist:
+                tag = Tag.objects.create(title=title)
+            new_quest.tags.add(tag)
+        return redirect('/question/id' + str(new_quest.pk))
