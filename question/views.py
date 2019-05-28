@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView, CreateView, UpdateView
@@ -15,6 +16,26 @@ def set_to_context(context):
     context['popular_tags'] = popular_tas
     context['best_members'] = best_members
 
+
+def pagination(request, context):
+    custom_paginate = 3
+    paginator = Paginator(context['object_list'], custom_paginate)
+    context['paginator'] = paginator
+    context['is_paginated'] = True
+
+    page_number = request.GET.get('page')
+
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        page_obj = paginator.page(paginator.num_pages)
+
+    context['page_obj'] = page_obj
+    context['object_list'] = page_obj.object_list
 
 class LogIn(FormView):
     template_name = 'login.html'
@@ -82,6 +103,7 @@ class QuestionList(ListView):
         context = super().get_context_data(**kwargs)
         set_to_context(context)
         context['object_list'] = QuestionModel.objects.all()
+        pagination(self.request, context)
         return context
 
 
@@ -93,6 +115,7 @@ class TagQuestionList(DetailView):
         context = super().get_context_data(**kwargs)
         set_to_context(context)
         context['object_list'] = QuestionModel.objects.filter(tags__id=self.kwargs['pk'])
+        pagination(self.request, context)
         return context
 
 
@@ -129,4 +152,5 @@ class HotQuestionList(ListView):
         object_list = sorted(context['object_list'], key=lambda x: x.get_rating(), reverse=True)
         context['object_list'] = object_list
         context['hot_questions'] = True
+        pagination(self.request, context)
         return context

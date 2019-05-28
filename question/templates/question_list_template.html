@@ -1,22 +1,26 @@
 {% for question in object_list %}
-    <article class="row">
-        <div class="col-auto">
-            <div class="quest__avatar" style="background-image: url('/{{ question.author.avatar }}')"></div>
-            <div class="quest__points">{{ question.get_rating }}
+    <div class="border" style="border-radius: 5px; margin: 1rem; box-shadow: 2px 2px 2px rgba(0,0,0,0.5); padding: 10px;">
+        <article class="row" style="margin: 1rem">
+            <div class="col-auto">
+                <div class="quest__avatar" style="background-image: url('/{{ question.author.avatar }}')"></div>
+                <div class="quest__points">{{ question.get_rating }}
+                </div>
             </div>
-        </div>
-        <div class="col">
-            <a href="/question/id{{ question.pk }}"><h2>{{ question.title }}</h2></a>
-            <p class="quest__text-small">{{ question.text }}</p>
-            <p>Tags:
-                {% for tag in question.tags.all %}
-                    <a href="#">{{ tag.title }}</a>
-                {% empty %}
-                    <span>no tags</span>
-                {% endfor %}
-            </p>
-        </div>
-    </article>
+            <div class="col">
+                <a href="/question/id{{ question.pk }}"><h2>{{ question.title }}</h2></a>
+                <p class="quest__text-small">{{ question.text }}</p>
+                <p>Tags:
+                    {% for tag in question.tags.all %}
+                        <a href="#">{{ tag.title }}</a>
+                    {% empty %}
+                        <span>no tags</span>
+                    {% endfor %}
+                </p>
+            </div>
+        </article>
+    </div>
 {% empty %}
     <article>No articles yet.</article>
 {% endfor %}
+
+{%  include 'pagination.html' %}
