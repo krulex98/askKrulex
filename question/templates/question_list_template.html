@@ -16,6 +16,9 @@
                         <span>no tags</span>
                     {% endfor %}
                 </p>
+                <p>
+                    <a href="{{ question.get_url }}">Answers ( {{ question.get_answers_count }} )</a>
+                </p>
             </div>
         </article>
     </div>

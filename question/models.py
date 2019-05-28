@@ -45,8 +45,11 @@ class Question(LikeAbleModel):
     def get_answers(self):
         return Answer.objects.filter(quest_id=self.id)
 
+    def get_answers_count(self):
+        return self.get_answers().count()
+
     def get_url(self):
-        return '/question/{quest_id}/'.format(quest_id=self.id)
+        return '/question/id{quest_id}'.format(quest_id=self.pk)
 
 
 class Answer(LikeAbleModel):

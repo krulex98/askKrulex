@@ -17,7 +17,7 @@
                 <p>{{ question.text }}</p>
                 <p>Tags:
                     {% for tag in question.tags.all %}
-                        <a href="#">{{ tag.title }}</a>
+                        <a href="{{ tag.get_url }}">{{ tag.title }}</a>
                     {% empty %}
                         <span>no tags</span>
                     {% endfor %}
