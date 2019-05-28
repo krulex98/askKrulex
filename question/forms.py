@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .models import *
@@ -32,6 +34,7 @@ class QuestionForm(forms.ModelForm):
     title = forms.CharField(required=True, label='Title')
     text = forms.CharField(required=True, max_length=960, widget=forms.Textarea)
     tags = forms.CharField(required=False, label='Tags')
+    date = datetime.now()
 
     class Meta:
         model = Question
@@ -50,4 +53,3 @@ class AnswerForm(forms.ModelForm):
         fields = [
             'text'
         ]
-

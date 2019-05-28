@@ -21,11 +21,13 @@ urlpatterns = [
     path('', views.QuestionList.as_view(), name='home'),
     path('admin/', admin.site.urls),
     path('login/', views.LogIn.as_view()),
-    path('register/', views.Register.as_view()),
+    path('register/', views.Register.as_view(), name='register'),
     path('settings/id<int:pk>', views.Settings.as_view()),
     path('logout/', views.logout_view),
     path('ask/', views.QuestionCreate.as_view()),
     path('question/id<int:pk>', views.Question.as_view()),
     path('hot/', views.HotQuestionList.as_view(), name='hot-questions'),
-    path('tag/id<int:pk>', views.TagQuestionList.as_view())
+    path('tag/id<int:pk>', views.TagQuestionList.as_view()),
+    path('answer_like/', views.answer_like),
+    path('question_like/', views.question_like)
 ]

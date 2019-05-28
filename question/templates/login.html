@@ -8,5 +8,5 @@
         <table class="mb-3 login-table">{{ form.as_table }}</table>
         <input class="mb-3" type="submit" value="Log in"/>
     </form>
-    <a class="mb-3" href="">create new account</a>
+    <a class="mb-3" href="{% url 'register' %}">create new account</a>
 {% endblock %}

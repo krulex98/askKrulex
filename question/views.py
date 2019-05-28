@@ -1,12 +1,15 @@
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.serializers import json
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView, CreateView, UpdateView
 from re import split as resplit
 from question.forms import *
 from .models import Question as QuestionModel
+import json as JSON
 
 
 def set_to_context(context):
@@ -36,6 +39,7 @@ def pagination(request, context):
 
     context['page_obj'] = page_obj
     context['object_list'] = page_obj.object_list
+
 
 class LogIn(FormView):
     template_name = 'login.html'
@@ -77,7 +81,7 @@ class Question(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        set_to_context(context)
         context['answer_form'] = self.form_class
         context['answers'] = Answer.objects.filter(quest_id=self.kwargs['pk'])
         return context
@@ -102,7 +106,8 @@ class QuestionList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         set_to_context(context)
-        context['object_list'] = QuestionModel.objects.all()
+        context['object_list'] = QuestionModel.objects.list_new()
+        context['hot_questions'] = False
         pagination(self.request, context)
         return context
 
@@ -154,3 +159,60 @@ class HotQuestionList(ListView):
         context['hot_questions'] = True
         pagination(self.request, context)
         return context
+
+
+def answer_like(request):
+    c_user = request.user
+    aid = request.POST.get('val')
+    cur_answer = Answer.objects.get(id=aid)
+    c_type = request.POST.get('type')
+    if cur_answer.author_id != c_user.id:
+        if c_type == "like":
+            cur_answer.like(c_user)
+            cur_answer.save()
+
+            return HttpResponse(JSON.dumps(
+                {'status': 'ok_like', 'val': cur_answer.get_rating()}),
+                content_type='application/json')
+        if c_type == 'dislike':
+            cur_answer.dislike(c_user)
+            cur_answer.save()
+            return HttpResponse(JSON.dumps(
+                {'status': 'ok_dislike', 'val': cur_answer.get_rating()}),
+                content_type='application/json')
+
+    return HttpResponse(
+        JSON.dumps({'status': 'user is author of this answer',
+                    'val': cur_answer.get_rating()}),
+        content_type='application/json')
+
+
+def question_like(request):
+    c_user = request.user
+    qid = request.POST.get('val')
+    cur_que = QuestionModel.objects.get(id=qid)
+    c_type = request.POST.get('type')
+    if cur_que.author_id != c_user.id:
+        if c_type == "like":
+            cur_que.like(c_user)
+            cur_que.save()
+
+            return HttpResponse(JSON.dumps(
+                {'status': 'ok_like', 'val': cur_que.get_rating()}),
+                content_type='application/json')
+        if c_type == 'dislike':
+            cur_que.dislike(c_user)
+            cur_que.save()
+            return HttpResponse(JSON.dumps(
+                {'status': 'ok_dislike', 'val': cur_que.get_rating()}),
+                content_type='application/json')
+
+        return HttpResponse(
+            JSON.dumps({'status': 'something go wrong in answer rating',
+                        'val': cur_que.get_rating()}),
+            content_type='application/json')
+
+    return HttpResponse(
+        JSON.dumps({'status': 'user is author of this question',
+                    'val': cur_que.get_rating()}),
+        content_type='application/json')

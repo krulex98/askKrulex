@@ -13,12 +13,18 @@ class LikeAbleModel(models.Model):
     dislikes = models.ManyToManyField(User, related_name='dislikes')
 
     def like(self, user):
-        self.dislikes.remove(user)
-        self.likes.add(user)
+        if self.dislikes.filter(id=user.id).exists():
+            self.dislikes.remove(user)
+            return
+        if not self.likes.filter(id=user.id).exists():
+            self.likes.add(user)
 
     def dislike(self, user):
-        self.likes.remove(user)
-        self.dislikes.add(user)
+        if self.likes.filter(id=user.id).exists():
+            self.likes.remove(user)
+            return
+        if not self.dislikes.filter(id=user.id).exists():
+            self.dislikes.add(user)
 
     def get_rating(self):
         return self.likes.count() - self.dislikes.count()

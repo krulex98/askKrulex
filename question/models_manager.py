@@ -3,6 +3,9 @@ from django.db.models import Count
 
 
 class QuestionManager(models.Manager):
+    def list_new(self):
+        return self.order_by('-date')
+
     # Lists all hot questions
     def list_hot(self):
         return self.order_by('-likes')
