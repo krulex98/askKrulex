@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView, CreateView, UpdateView
@@ -9,7 +8,13 @@ from question.forms import *
 from .models import Question as QuestionModel
 
 
-# Create your views here.
+def set_to_context(context):
+    popular_tas = Tag.objects.count_popular()
+    best_members = User.objects.all()[:20]
+
+    context['popular_tags'] = popular_tas
+    context['best_members'] = best_members
+
 
 class LogIn(FormView):
     template_name = 'login.html'
@@ -75,7 +80,19 @@ class QuestionList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        set_to_context(context)
         context['object_list'] = QuestionModel.objects.all()
+        return context
+
+
+class TagQuestionList(DetailView):
+    model = Tag
+    template_name = 'tag_question_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        set_to_context(context)
+        context['object_list'] = QuestionModel.objects.filter(tags__id=self.kwargs['pk'])
         return context
 
 

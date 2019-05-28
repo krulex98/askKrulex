@@ -26,5 +26,6 @@ urlpatterns = [
     path('logout/', views.logout_view),
     path('ask/', views.QuestionCreate.as_view()),
     path('question/id<int:pk>', views.Question.as_view()),
-    path('hot/', views.HotQuestionList.as_view(), name='hot-questions')
+    path('hot/', views.HotQuestionList.as_view(), name='hot-questions'),
+    path('tag/id<int:pk>', views.TagQuestionList.as_view())
 ]

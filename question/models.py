@@ -25,7 +25,12 @@ class LikeAbleModel(models.Model):
 
 
 class Tag(models.Model):
+    objects = TagManager()
+
     title = models.CharField(max_length=32, null=False)
+
+    def get_url(self):
+        return '/tag/id' + str(self.pk)
 
 
 class Question(LikeAbleModel):
@@ -36,6 +41,12 @@ class Question(LikeAbleModel):
     date = models.DateField(auto_now=True)
 
     objects = QuestionManager()
+
+    def get_answers(self):
+        return Answer.objects.filter(quest_id=self.id)
+
+    def get_url(self):
+        return '/question/{quest_id}/'.format(quest_id=self.id)
 
 
 class Answer(LikeAbleModel):
