@@ -5,7 +5,18 @@ services:
     build: .
     command: ./entrypoint.sh
     volumes:
-      - .:/code
-      - .db_data/db.sqlite3:/db.sqlite3
+      - .:/usr/src/app/
     ports:
       - "8000:8000"
+    depends_on:
+      - db
+  db:
+    image: postgres:12.2
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=forum_django
+      - POSTGRES_PASSWORD=forum_django
+      - POSTGRES_DB=forum_django_db
+volumes:
+  postgres_data:

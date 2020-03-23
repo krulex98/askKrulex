@@ -3,7 +3,6 @@
 # Apply database migrations
 echo "Apply database migrations"
 python manage.py migrate
-python manage.py generator 1000
 
 # Start server
 echo "Starting server"
