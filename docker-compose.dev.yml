@@ -8,6 +8,8 @@ services:
       - .:/usr/src/app/
     ports:
       - "8000:8000"
+    environment:
+      - MODE=dev
     depends_on:
       - db
   db:

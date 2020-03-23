@@ -25,7 +25,7 @@ SECRET_KEY = '4^-5^&!jrz^mhp#d_%(=vg817+m0=$d#)^aijn@*v3f764vq)5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
 
 # Application definition
@@ -74,15 +74,27 @@ WSGI_APPLICATION = 'askKrulex.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+develop_connect = {
+    "ENGINE": "django.db.backends.postgresql",
+    "NAME": "forum_django_db",
+    "USER": "forum_django",
+    "PASSWORD": "forum_django",
+    "HOST": "db",
+    "PORT": "5432"
+}
+
+production_connect = {
+    "ENGINE": "django.db.backends.postgresql",
+    "NAME": "165.22.202.17:9090/forum_django_db",
+    "USER": "forum_django",
+    "PASSWORD": "forum_django",
+}
+
+print(os.environ["MODE"])
+connect = develop_connect if os.environ['MODE'] == 'dev' else production_connect
+
 DATABASES = {
-    'default': {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "forum_django_db",
-        "USER": "forum_django",
-        "PASSWORD": "forum_django",
-        "HOST": "db",
-        "PORT": "5432"
-    }
+    'default': connect
 }
 
 
